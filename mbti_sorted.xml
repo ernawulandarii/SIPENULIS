@@ -1,0 +1,18 @@
+<root>
+
+<rule id='1' q='小学校のクラス単位の投票で最多得票の作品がマスコットに決められました' a='next' b='previous'>
+</rule>
+
+<rule id='2' q='イスラム教徒はハラルの正しいじょうほうを求めているムスリム。' a='next' b='previous'>
+</rule>
+
+<rule id='3' q='In your social groups do you' a='Keep abreast of other’s happenings' b='Get behind on the news'>
+</rule>
+
+<rule id='4' q='In phoning do you' a='Rarely question that it will all be said' b='Rehearse what you’ll say'>
+</rule>
+
+<rule id='5' q='In company do you' a='Initiate conversation' b='Wait to be approached'>
+</rule>
+
+</root>
