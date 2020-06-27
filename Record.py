@@ -19,10 +19,7 @@ from loading import MovieSplashScreen
 from PyQt5.QtGui import *
 import mysql.connector as mdb
 from PyQt5.QtWidgets import *
-import cherrypy
-from DatabaseScore import DatabaseScore
-import json
-from getch import pause_exit
+
 #from openpyxl import Workbook,load_workbook
 
 startTime = time.time()
@@ -39,7 +36,6 @@ human_rater = [35, 73, 36, 62, 42, 75, 90, 65, 86, 68,
 no1 = []
 excel = []
 list_score = []
-text = docx.Document('soal1.docx')
 arr_score = []
 
 score = 0
@@ -351,6 +347,7 @@ class Ui_RecordForm(object):
         self.logoutButton.setStyleSheet("border: 2px solid  rgb(13, 58, 71);")
         self.logoutButton.setObjectName("logoutButton")
         self.verticalLayout_7.addWidget(self.logoutButton)
+        self.logoutButton.hide()
         self.verticalLayout.addWidget(self.widget_2)
 
         self.retranslateUi(RecordForm)
@@ -398,49 +395,56 @@ class Ui_RecordForm(object):
                 sample_rate_hertz = 8000
                 enable_automatic_punctuation = True
                 r.adjust_for_ambient_noise(source)
+                movie = QMovie("Images/loading1.gif")
+                splash = MovieSplashScreen(movie)
+                splash.show()
 
+                start = time.time()
+
+                while movie.state() == QMovie.Running and time.time() < start + 2:
+                    QApplication.processEvents()
                 try:
+                        test.append(r.recognize_google(audio, language="ja-JP"))
+                        text_output = (r.recognize_google(audio, language="ja-JP"))
 
-                    test.append(r.recognize_google(audio, language="ja-JP"))
-                    text_output = (r.recognize_google(audio, language="ja-JP"))
+                        print("あなたの答えは:", test)
+                        self.textAnswer.setText(text_output)
+                        print("\n")
 
-                    print("あなたの答えは:", test)
-                    self.textAnswer.setText(text_output)
-                    print("\n")
-
-                    self.nextButton.show()
-                    self.recordButton.hide()
+                        self.nextButton.show()
+                        self.recordButton.hide()
 
                 except:
-                    self.recordButton.show()
-                    self.nextButton.hide()
-                    print('Sorry.. run again...')
-                    self.textAnswer.setText("Sorry.. Record again...")
+                        self.recordButton.show()
+                        self.nextButton.hide()
+                        print('Sorry.. run again...')
+                        self.textAnswer.setText("Sorry.. Record again...")
 
 
     def finalscore(self):
         current_score = 0
         n = 2
         p = 2
+        # insert
+        connection = mdb.connect(host="localhost", user="root", password="", db="db_skripsi", port=3306,
+                                 autocommit=True)
+        cur = connection.cursor()
+        query = "SELECT * from user where name=%s"
+        data = cur.execute(query, [self.name])
+        rows = cur.fetchall()
+        for row in rows:
+            id = int(row[0])
+            cur.execute(
+                "INSERT INTO collect_data(id_user,number_1,number_2,number_3,number_4,number_5) VALUES(%s,%s,%s,%s,%s,%s) ",
+                (id, test[0], test[1], test[2], test[3], test[4]))
+            myresult = connection.commit()
         for q in range(question):
 
             kj = 1
             scores = []
             # process the student's answer document
             prep = rk.preprocessing(test[q])  # delete repetitive from question, convert to romaji(if needed), filter text
-            # insert
-            connection = mdb.connect(host="localhost", user="root", password="", db="db_skripsi", port=3306,
-                                     autocommit=True)
-            cur = connection.cursor()
-            query = "SELECT * from user where name=%s"
-            data = cur.execute(query, [self.name])
-            rows = cur.fetchall()
-            for row in rows:
-                id = int(row[0])
-                insert = "INSERT INTO collect_data(id_user,number_1,number_2,number_3,number_4,number_5) VALUES(%s,%s,%s,%s,%s,%s) "
-                for values in test[q]:
-                    cur.execute(insert, id, values)
-                    connection.commit()
+
             print('\nJAWABAN ', q + 1)
             pattern = rk.read_txt("jwbDosen" + str(q + 1) + ".docx")  # read answer key documents
             # for each answer keys (from each questions)
@@ -515,7 +519,12 @@ class Ui_RecordForm(object):
         rows = cur.fetchall()
         for row in rows:
             id = int(row[0])
-            cur.execute("INSERT INTO score(id_user,score,akurasi_sistem,exec_time) VALUES(%s,%s,%s,%s) ", (id, totalscore, acc, timing))
+            cur.execute("INSERT INTO score(id_user,score,accuracy_rk,exec_time) VALUES(%s,%s,%s,%s) ", (id, totalscore, acc, timing))
+            myresult = connection.commit()
+        # insert
+            cur.execute(
+                "INSERT INTO rabinkarp_score(id_user,score_1,score_2,score_3,score_4,score_5,accuracy_rk) VALUES(%s,%s,%s,%s,%s,%s,%s) ",
+                (id, arr_score[0], arr_score[1], arr_score[2], arr_score[3], arr_score[4], acc))
             myresult = connection.commit()
 
 

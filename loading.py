@@ -33,7 +33,7 @@ class MovieSplashScreen(QSplashScreen):
 if __name__ == "__main__":
 
     app = QApplication(sys.argv)
-    movie = QMovie("Images/Loading.gif")
+    movie = QMovie("Images/loading1.gif")
     splash = MovieSplashScreen(movie)
     splash.show()
 
