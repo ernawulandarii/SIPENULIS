@@ -22,7 +22,7 @@ from PyQt5.QtWidgets import *
 
 #from openpyxl import Workbook,load_workbook
 
-startTime = time.time()
+
 n = 2
 # w = 2
 p = 2
@@ -422,6 +422,7 @@ class Ui_RecordForm(object):
 
 
     def finalscore(self):
+        startTime = time.time()
         current_score = 0
         n = 2
         p = 2
@@ -440,17 +441,27 @@ class Ui_RecordForm(object):
             myresult = connection.commit()
         for q in range(question):
 
+            prep = rk.preprocessing(test[q])
+
             kj = 1
             scores = []
             # process the student's answer document
-            prep = rk.preprocessing(test[q])  # delete repetitive from question, convert to romaji(if needed), filter text
+             # delete repetitive from question, convert to romaji(if needed), filter text
 
             print('\nJAWABAN ', q + 1)
-            pattern = rk.read_txt("jwbDosen" + str(q + 1) + ".docx")  # read answer key documents
-            # for each answer keys (from each questions)
-            for x in range(0, len(pattern)):
+            # variasi kunci
+            if q == 0 or 2 or 3:
+                var = 2
+            if q == 1:
+                var = 3
+            if q == 4:
+                var = 7
+              # read answer key documents
+            # for each answer keys (from each questions):
+            for x in range(1, var+1):
+                pattern = rk.read_txt("key" + str(q+1) + "-" + str(x) + ".docx")
                 # process answer keys
-                prep2 = rk.preprocessing(pattern[x])  # delete repetitive from question, convert to romaji(if needed), filter text
+                prep2 = rk.preprocessing(pattern)  # delete repetitive from question, convert to romaji(if needed), filter text
                 winnowing = rk.rabin(prep, p, n)
                 winnowing2 = rk.rabin(prep2, p, n)
                 # similarity measurement
@@ -492,7 +503,7 @@ class Ui_RecordForm(object):
 
         print("======================================")
         print("======================================")
-        # print("Human Rater\t\t\t: ", human_rater)
+        print("Human Rater    : " + str(human_rater[n-1]))
         print("Nilai-nilai Siswa\t: ", totalscore)
         self.scoreLabel.setText(str(totalscore))
         print("Nilai per soal \t\t: ", arr_score)
@@ -523,8 +534,8 @@ class Ui_RecordForm(object):
             myresult = connection.commit()
         # insert
             cur.execute(
-                "INSERT INTO rabinkarp_score(id_user,score_1,score_2,score_3,score_4,score_5,accuracy_rk) VALUES(%s,%s,%s,%s,%s,%s,%s) ",
-                (id, arr_score[0], arr_score[1], arr_score[2], arr_score[3], arr_score[4], acc))
+                "INSERT INTO rabinkarp_score(id_user,score_1,score_2,score_3,score_4,score_5,accuracy_rk,human_rater) VALUES(%s,%s,%s,%s,%s,%s,%s,%s) ",
+                (id, arr_score[0], arr_score[1], arr_score[2], arr_score[3], arr_score[4], acc, human_rater[n-1]))
             myresult = connection.commit()
 
 
