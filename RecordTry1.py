@@ -47,16 +47,16 @@ m18 = [85, 80, 65, 95, 95, 84]
 m19 = [90, 50, 70, 70, 90, 74]
 m20 = [80, 80, 75, 69, 75, 74]
 m21 = [75, 73, 82, 67, 85, 76]
-m22 = [95, 95, 100, 100, 100, 98]
-m23 = [90, 80, 100, 100, 100, 94]
-m24 = [90, 100, 100, 90, 100, 96]
-m25 = [90, 100, 100, 100, 100, 98]
-m26 = [100, 85, 100, 25, 85, 79]
-m27 = [95, 50, 100, 90, 60, 79]
-m28 = [80, 35, 100, 95, 95, 81]
-m29 = [95, 50, 90, 55, 60, 70]
-m30 = [90, 65, 85, 85, 90, 74]
-m31 = [60, 50, 25, 25, 25, 37]
+m22 = [100, 100, 100, 100, 100, 98]
+m23 = [95, 84, 95, 55, 49, 94]
+m24 = [95, 90, 76, 59, 75, 96]
+m25 = [97, 57, 70, 75, 60, 98]
+m26 = [97, 69, 68, 65, 65, 79]
+m27 = [69, 66, 63, 55, 58, 79]
+m28 = [75, 63, 53, 70, 32, 81]
+m29 = [66, 50, 42, 60, 34, 70]
+m30 = [67, 68, 61, 28, 60, 74]
+m31 = [86, 54, 80, 34, 63, 37]
 m32 = [75, 70, 85, 100, 75, 81]
 m33 = [25, 25, 25, 85, 25, 37]
 m34 = [100, 100, 90, 0, 95, 77]
@@ -84,10 +84,10 @@ jmlquest = 5
 scores = []
 
 test = []
-class Ui_RecordForm(object):
+class Ui_Record1Form(object):
 
-    def setupUi(self, RecordForm):
-        RecordForm.setWindowIcon(QtGui.QIcon('Images/icon.png'))
+    def setupUi(self, Record1Form):
+        Record1Form.setWindowIcon(QtGui.QIcon('Images/icon.png'))
 
         ##################################################
 
@@ -108,11 +108,11 @@ class Ui_RecordForm(object):
 
         ##################################################
 
-        RecordForm.setObjectName("RecordForm")
-        RecordForm.resize(933, 640)
+        Record1Form.setObjectName("Record1Form")
+        Record1Form.resize(933, 640)
 
-        RecordForm.showMaximized()
-        RecordForm.setStyleSheet(
+        Record1Form.showMaximized()
+        Record1Form.setStyleSheet(
             """
             QWidget{background-color: rgb(25,25, 40);}
             QPushButton {
@@ -130,10 +130,10 @@ class Ui_RecordForm(object):
             }
             """
         )
-        self.verticalLayout = QtWidgets.QVBoxLayout(RecordForm)
+        self.verticalLayout = QtWidgets.QVBoxLayout(Record1Form)
         self.verticalLayout.setContentsMargins(0, 0, 0, 0)
         self.verticalLayout.setObjectName("verticalLayout")
-        self.widget_2 = QtWidgets.QWidget(RecordForm)
+        self.widget_2 = QtWidgets.QWidget(Record1Form)
         sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Ignored, QtWidgets.QSizePolicy.Preferred)
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
@@ -378,8 +378,8 @@ class Ui_RecordForm(object):
         self.logoutButton.hide()
         self.verticalLayout.addWidget(self.widget_2)
 
-        self.retranslateUi(RecordForm)
-        QtCore.QMetaObject.connectSlotsByName(RecordForm)
+        self.retranslateUi(Record1Form)
+        QtCore.QMetaObject.connectSlotsByName(Record1Form)
         self.nextButton.hide()
         self.nextButton.clicked.connect(self.nextBtnClicked)
 
@@ -450,9 +450,9 @@ class Ui_RecordForm(object):
 
     def finalscore(self):
         startTime = time.time()
-        n = 2
-        p = 2
         accuracy = []
+        paramp = []
+        paramn = []
 
         # insert
         connection = mdb.connect(host="localhost", user="root", password="", db="db_skripsi", port=3306,
@@ -490,37 +490,51 @@ class Ui_RecordForm(object):
                     # looping untuk tiap parameter p dan n
                     '''percobaan ini bertujuan untuk mencari tau pola nilai mahasiswa.
                        hanya bisa digunakan jika ada nilai human rater.'''
-
-                    rabinkarp = rk.rabin(prep, p, n)
-                    rabinkarp2 = rk.rabin(prep2, p, n)
-                    # similarity measurement
-                    jac_measure = rk.jaccard(rabinkarp, rabinkarp2)
-                    dice_measure = rk.dice(rabinkarp, rabinkarp2)
-                    cos_measure = rk.cosine(rabinkarp, rabinkarp2)
-
-
-                    score = cos_measure
-                    selisih = abs(score - nilai_mahasiswa[count - 1][q - 1])
-                    akurasi = abs(100 - ((selisih / 100) * 100))
-                    print("Nomor " + str(q) + " : " + str(score))
-                    # akurasi terbesar dipilih, ditampilkan nilai dan parameternya
-                    #temp_akurasi = akurasi
-                    temp_score = score
-                    if current_score <= temp_score:
-                        current_score = temp_score
-                        current_akurasi = akurasi
-                    #if current_akurasi < temp_akurasi:
-                        #current_akurasi = temp_akurasi
-                        #current_score = score
-                    else:
-                        continue
+                    for p in range(2, 6):
+                        if p == 2 or p % 2 == 1:
+                            for n in range(2, 8):
+                                rabinkarp = rk.rabin(prep, p, n)
+                                rabinkarp2 = rk.rabin(prep2, p, n)
+                                # similarity measurement
+                                jac_measure = rk.jaccard(rabinkarp, rabinkarp2)
+                                dice_measure = rk.dice(rabinkarp, rabinkarp2)
+                                cos_measure = rk.cosine(rabinkarp, rabinkarp2)
+                                score = cos_measure
+                                print("Ngram:" + str(n) + "-" + "Prime:" + str(p))
+                                selisih = abs(score - nilai_mahasiswa[count - 1][q - 1])
+                                akurasi = abs(100 - ((selisih / 100) * 100))
+                                print("Nomor " + str(q) + " : " + str(score))
+                                # akurasi terbesar dipilih, ditampilkan nilai dan parameternya
+                                temp_akurasi = akurasi
+                                temp_score = score
+                                #if current_score <= temp_score:
+                                    #current_score = temp_score
+                                    #current_akurasi = akurasi
+                                    #xx = x
+                                    #px = p
+                                    #nx = n
+                                if current_akurasi < temp_akurasi:
+                                    current_akurasi = temp_akurasi
+                                    current_score = score
+                                    xx = x
+                                    px = p
+                                    nx = n
+                                else:
+                                    continue
                 # print hasil untuk tiap nomor
                 print("NOMOR " + str(q))
                 print("Nilai : " + str(current_score))
                 print("Akurasi : " + str(current_akurasi))
+                print("Parameter (pnw) : " + (str(px) + "," + str(nx)))
                 print("--------------------------------------")
+
                 arr_score.append(current_score)
                 accuracy.append(current_akurasi)
+                paramp.append(px)
+                paramn.append(nx)
+            cur.execute("INSERT INTO parameter(id_user,n1,n2,n3,n4,n5,p1,p2,p3,p4,p5) VALUES(%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s) ", (id, paramn[0], paramn[1], paramn[2], paramn[3], paramn[4], paramp[0], paramp[1], paramp[2], paramp[3], paramp[4]))
+            connection.commit()
+                #a = a + 1
                 # print hasil nilai total
             average = sum(arr_score) / len(arr_score)
             print("Total Skor     : " + str(average))
@@ -566,7 +580,7 @@ class Ui_RecordForm(object):
             self.result = [0, 0, 0, 0, 0, 0, 0, 0, ""]
             self.nowCol = 0
             self.nowI = 0
-            self.retranslateUi(RecordForm)
+            self.retranslateUi(Record1Form)
 
     def nextBtnClicked(self):
             self.nextButton.hide()
@@ -599,27 +613,27 @@ class Ui_RecordForm(object):
             # self.resultLabel.show()
             # self.resultLabelDesc.show()
 
-    def retranslateUi(self, RecordForm):
+    def retranslateUi(self, Record1Form):
             _translate = QtCore.QCoreApplication.translate
-            RecordForm.setWindowTitle(_translate("RecordForm", "SIPENULIS"))
-            self.lbl_nama.setText(_translate("RecordForm", "Name :"))
-            self.lbl_score.setText(_translate("RecordForm", "Score :"))
-            self.label_5.setText(_translate("RecordForm", "Answer The Questions"))
-            self.label_7.setText(_translate("RecordForm", "Your Answer"))
-            self.recordButton.setText(_translate("RecordForm", "RECORD"))
-            # self.nextButton.setaText(_translate("RecordForm", "NEXT"))
-            self.logoutButton.setText(_translate("RecordForm", "LOGOUT"))
+            Record1Form.setWindowTitle(_translate("Record1Form", "SIPENULIS"))
+            self.lbl_nama.setText(_translate("Record1Form", "Name :"))
+            self.lbl_score.setText(_translate("Record1Form", "Score :"))
+            self.label_5.setText(_translate("Record1Form", "Answer The Questions"))
+            self.label_7.setText(_translate("Record1Form", "Your Answer"))
+            self.recordButton.setText(_translate("Record1Form", "RECORD"))
+            # self.nextButton.setaText(_translate("Record1Form", "NEXT"))
+            self.logoutButton.setText(_translate("Record1Form", "LOGOUT"))
             self.textQuestion.setText(_translate(
-                "RecordForm", self.questions[self.nowCol * 10 + self.nowI][1]))
-            self.nextButton.setText(_translate("RecordForm", "NEXT"))
+                "Record1Form", self.questions[self.nowCol * 10 + self.nowI][1]))
+            self.nextButton.setText(_translate("Record1Form", "NEXT"))
             ########################################################
-            self.nameLabel.setText(_translate("RecordForm", self.name))
+            self.nameLabel.setText(_translate("Record1Form", self.name))
 
 if __name__ == "__main__":
     import sys
     app = QtWidgets.QApplication(sys.argv)
-    RecordForm = QtWidgets.QWidget()
-    ui = Ui_RecordForm()
-    ui.setupUi(RecordForm)
-    RecordForm.show()
+    Record1Form = QtWidgets.QWidget()
+    ui = Ui_Record1Form()
+    ui.setupUi(Record1Form)
+    Record1Form.show()
     sys.exit(app.exec_())

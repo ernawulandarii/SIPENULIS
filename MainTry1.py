@@ -7,14 +7,14 @@
 # WARNING! All changes made in this file will be lost!
 
 from PyQt5 import QtCore, QtWidgets, QtGui
-from Record import Ui_RecordForm
+from RecordTry1 import Ui_Record1Form
 import mysql.connector as mdb
 import hashlib
-from User import User
+from Sipenulis.User import User
 import json
 import datetime
-import icons_rc  # pylint: disable=unused-import
-from customized import PasswordEdit
+import Sipenulis.icons_rc  # pylint: disable=unused-import
+from Sipenulis.customized import PasswordEdit
 
 try:
     _fromUtf8 = QtCore.QString.fromUtf8
@@ -87,10 +87,10 @@ class Ui_Dialog(object):
                  jsdata = json.dumps(jsondata, indent=4, sort_keys=True, default=str)
                  js_data = json.loads(jsdata)
                  #self.messagebox("Congrats", "Welcome "+ name)
-                 self.recordForm = QtWidgets.QWidget()
-                 self.ui = Ui_RecordForm(name)
-                 self.ui.setupUi(self.recordForm)
-                 self.recordForm.show()
+                 self.record1Form = QtWidgets.QWidget()
+                 self.ui = Ui_Record1Form(name)
+                 self.ui.setupUi(self.record1Form)
+                 self.record1Form.show()
 
                  Dialog.close()
 
@@ -104,6 +104,7 @@ class Ui_Dialog(object):
 
         Form.setObjectName("Form")
         Form.resize(475, 562)
+        Form.setWindowIcon(QtGui.QIcon('Images/icon.png'))
         # remove the title bar
         # self.setWindowFlags(QtCore.Qt.FramelessWindowHint)
 
@@ -297,7 +298,7 @@ class Ui_Dialog(object):
 
     def retranslateUi(self, Form):
         _translate = QtCore.QCoreApplication.translate
-        Form.setWindowTitle(_translate("Form", "Form"))
+        Form.setWindowTitle(_translate("Form", "SIPENULIS"))
         # self.login_btn_3.setText(_translate("Form", "X"))
         self.u_name_label.setText(_translate(
             "Form",
