@@ -506,7 +506,7 @@ class Ui_Record1Form(object):
                                 print("Nomor " + str(q) + " : " + str(score))
                                 # akurasi terbesar dipilih, ditampilkan nilai dan parameternya
                                 temp_akurasi = akurasi
-                                temp_score = score
+                                #temp_score = score
                                 #if current_score <= temp_score:
                                     #current_score = temp_score
                                     #current_akurasi = akurasi
